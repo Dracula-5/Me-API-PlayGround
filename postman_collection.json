@@ -1,0 +1,44 @@
+{
+  "info": {
+    "name": "Me-API Playground",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Get Profile",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/profile"
+      }
+    },
+    {
+      "name": "Update Profile",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {"key": "X-API-Key", "value": "{{adminKey}}"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": "{{baseUrl}}/profile",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Your Name\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/search?q=python"
+      }
+    }
+  ]
+}

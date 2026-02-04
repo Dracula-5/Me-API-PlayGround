@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: meapi-api
+    env: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: meapi-db
+          property: connectionString
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+databases:
+  - name: meapi-db
+    databaseName: meapi
+    user: meapi

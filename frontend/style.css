@@ -1,0 +1,227 @@
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: "Segoe UI", sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 30px;
+    color: #4b1d3f;
+}
+
+.card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+h2 {
+    color: #6a1b4d;
+}
+
+button {
+    background: linear-gradient(135deg, #ff6a88, #ff99ac);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    margin: 6px 0;
+    font-weight: bold;
+}
+
+button:hover {
+    box-shadow: 0 8px 20px rgba(255,105,135,0.6);
+}
+.ghost {
+    background: transparent;
+    color: #6a1b4d;
+    border: 2px solid #ff99ac;
+}
+
+.edit-box input,
+.edit-box textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 14px;
+    border: none;
+    margin: 6px 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+textarea {
+    min-height: 70px;
+}
+.search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.search-row input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.badge {
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #eee;
+    margin-left: 8px;
+}
+.badge.beginner { background: #d1e7dd; }
+.badge.medium { background: #fff3cd; }
+.badge.advanced { background: #cfe2ff; }
+
+.project {
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 15px;
+}
+
+a {
+    color: #6a1b4d;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Floating icons */
+.floating-icons span {
+    position: fixed;
+    font-size: 24px;
+    opacity: 0.4;
+    animation: float 12s infinite;
+}
+
+.floating-icons span:nth-child(1){ top:10%; left:15%; }
+.floating-icons span:nth-child(2){ top:70%; left:80%; }
+.floating-icons span:nth-child(3){ top:40%; left:60%; }
+.floating-icons span:nth-child(4){ top:85%; left:25%; }
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-25px); }
+    100% { transform: translateY(0); }
+}
+button {
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+#adminBadge {
+    background-color: #2ecc71;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 10px;
+}
+/* Admin-only edit sections */
+.edit-box {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px dashed #aaa;
+    background-color: #f9f9f9;
+}
+.edit-box select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-left: 8px;
+}
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+.modal {
+    background: #fff;
+    width: min(420px, 92vw);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.modal h3 {
+    margin: 0 0 6px 0;
+    color: #4b1d3f;
+}
+.modal-hint {
+    margin: 0 0 12px 0;
+    color: #6a1b4d;
+}
+.modal-note {
+    margin: 0 0 12px 0;
+    color: #444;
+    font-size: 12px;
+}
+.modal input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+.form-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.modal-error {
+    color: #b00020;
+    margin-top: 8px;
+    font-weight: bold;
+}

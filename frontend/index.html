@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="api-base" content="http://127.0.0.1:8000">
+    <title>Me-API Playground</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="floating-icons">
+    <span>*</span><span>#</span><span>^</span><span>+</span>
+</div>
+
+<div class="container">
+    <div class="top-bar">
+        <span id="adminBadge" style="display:none;">Admin</span>
+        <div class="actions">
+            <button id="loginBtn">Admin Login</button>
+            <button onclick="logout()" id="logoutBtn" style="display:none">Logout</button>
+        </div>
+    </div>
+
+    <h1>Me-API Playground</h1>
+
+    <section class="card">
+        <h2>Search</h2>
+        <div class="search-row">
+            <input id="searchSkill" placeholder="Search projects by skill (e.g., Python)">
+            <button onclick="searchBySkill()">Search Skill</button>
+        </div>
+        <div class="search-row">
+            <input id="searchQuery" placeholder="Search skills/projects (e.g., API)">
+            <button onclick="searchAll()">Search All</button>
+        </div>
+        <div id="searchResults"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="card">
+        <h2>Profile</h2>
+        <button onclick="toggleProfile()">Load Profile</button>
+        <button onclick="startProfileEdit()">Edit Profile</button>
+
+        <div id="profileView"></div>
+
+        <div class="edit-box">
+            <input id="pName" placeholder="Name">
+            <input id="pEmail" placeholder="Email">
+            <input id="pEdu" placeholder="Education">
+            <input id="pGithub" placeholder="GitHub URL">
+            <input id="pLinkedin" placeholder="LinkedIn URL">
+            <button id="profileSaveBtn" onclick="saveProfile()">Update Profile</button>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="card">
+        <h2>Skills</h2>
+        <button onclick="toggleloadSkills()">Load Skills</button>
+
+        <ul id="skills"></ul>
+
+        <div class="edit-box">
+            <input id="skillName" placeholder="Skill name">
+
+            <select id="skillProf">
+                <option value="">Select proficiency</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Medium">Medium</option>
+                <option value="Advanced">Advanced</option>
+            </select>
+
+            <div class="form-actions">
+                <button id="skillAddBtn" onclick="addSkill()">Add Skill</button>
+                <button id="skillUpdateBtn" onclick="updateSkill()" style="display:none;">Update Skill</button>
+                <button id="skillCancelBtn" onclick="cancelSkillEdit()" style="display:none;">Cancel</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="card">
+        <h2>Projects</h2>
+        <button onclick="toggleloadProjects()">Load Projects</button>
+
+        <div id="projects"></div>
+
+        <div class="edit-box">
+            <input id="projTitle" placeholder="Title">
+            <textarea id="projDesc" placeholder="Description"></textarea>
+            <input id="projLink" placeholder="Project Link">
+            <div class="form-actions">
+                <button id="projectAddBtn" onclick="addProject()">Add Project</button>
+                <button id="projectUpdateBtn" onclick="updateProject()" style="display:none;">Update Project</button>
+                <button id="projectCancelBtn" onclick="cancelProjectEdit()" style="display:none;">Cancel</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- WORK -->
+    <section class="card">
+        <h2>Work</h2>
+        <button onclick="toggleloadWork()">Load Work</button>
+
+        <ul id="workList"></ul>
+
+        <div class="edit-box">
+            <input id="workCompany" placeholder="Company">
+            <input id="workRole" placeholder="Role">
+            <input id="workStart" placeholder="Start date (e.g., 2023-01)">
+            <input id="workEnd" placeholder="End date (optional)">
+            <textarea id="workDesc" placeholder="Description"></textarea>
+            <div class="form-actions">
+                <button id="workAddBtn" onclick="addWork()">Add Work</button>
+                <button id="workUpdateBtn" onclick="updateWork()" style="display:none;">Update Work</button>
+                <button id="workCancelBtn" onclick="cancelWorkEdit()" style="display:none;">Cancel</button>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="adminModal" class="modal-backdrop" style="display:none;">
+    <div class="modal">
+        <h3>Admin Login</h3>
+        <p class="modal-hint">Enter the admin key to unlock editing.</p>
+        <p class="modal-note">For assessment purpose admin key is admin 123.</p>
+        <input id="adminKeyInput" type="password" placeholder="Admin key">
+        <div class="modal-actions">
+            <button id="adminSubmitBtn">Login</button>
+            <button id="adminCancelBtn" class="ghost">Cancel</button>
+        </div>
+        <p id="adminError" class="modal-error" style="display:none;">Invalid key</p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
