@@ -1,6 +1,6 @@
 # Me-API Playground
 
-Full-stack portfolio API and dashboard built with FastAPI, SQLAlchemy, and a static frontend. Supports profile, skills, projects, work history, search, and admin-only edits.
+This is my full-stack portfolio API + dashboard built with FastAPI, SQLAlchemy, and a static frontend. It covers profile, skills, projects, work history, search, and admin-only edits.
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Dracula-5/Me-API-PlayGround)
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Dracula-5/Me-API-PlayGround)
@@ -15,6 +15,9 @@ Full-stack portfolio API and dashboard built with FastAPI, SQLAlchemy, and a sta
 - FastAPI + SQLAlchemy API in `backend/`
 - Static HTML/CSS/JS frontend in `frontend/`
 - Postgres in production (Render), SQLite supported locally
+
+## Access Rules
+Only admins can edit. The demo admin key is `admin 123`. This is intentionally simple for assessment and should be replaced in real deployments.
 
 ## Setup (Local)
 1. Create and activate a virtual environment in `backend`.
@@ -58,7 +61,11 @@ python backend/migrate_sqlite_to_postgres.py --reset
 ```
 
 ## Schema
-See `backend/schema.md`.
+See `backend/schema.md`. Quick summary:
+- `Profile`: `id`, `name`, `email`, `education`, `github`, `linkedin`
+- `Skill`: `id`, `name`, `proficiency`, `profile_id`
+- `Project`: `id`, `title`, `description`, `links`, `profile_id`
+- `Work`: `id`, `company`, `role`, `start_date`, `end_date`, `description`, `profile_id`
 
 ## Sample cURL
 ```bash
@@ -92,8 +99,10 @@ Set env vars to control simple in-memory rate limit:
 - `RATE_LIMIT` (default 60 requests)
 - `RATE_WINDOW` (default 60 seconds)
 
-## Known Limitations
-- Single-profile assumption (demo scope).
-- Admin key is stored in client code (demo-only).
+## Notes
+- Limits: single-profile by design for the demo, and the admin key lives in the client (demo-only).
+- Trade-offs: simple admin auth keeps things easy to review, but isn’t production-grade.
+- Hosting reality: Render free tiers can cold start; the UI retries and caches to feel consistent.
+- Next steps: move auth to server-side sessions or OAuth, add a real user model, and add tests + CI.
 
 The `render.yaml` and `netlify.toml` files are included to speed up provisioning.
