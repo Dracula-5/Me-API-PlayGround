@@ -119,6 +119,21 @@ let editingSkillId = null;
 let editingProjectId = null;
 let editingWorkId = null;
 
+const AUTO_RETRY_MAX = 5;
+const autoRetryCounts = {
+    profile: 0,
+    skills: 0,
+    projects: 0,
+    work: 0
+};
+
+function scheduleAutoRetry(kind, fn) {
+    if (autoRetryCounts[kind] >= AUTO_RETRY_MAX) return;
+    autoRetryCounts[kind] += 1;
+    const delay = 1500 * autoRetryCounts[kind];
+    setTimeout(fn, delay);
+}
+
 function openAdminModal() {
     if (!adminModal) return;
     adminModal.style.display = "flex";
@@ -139,6 +154,7 @@ function loginWithKey(key) {
         sessionStorage.setItem("auth", key);
         closeAdminModal();
         updateUI();
+        loadAllPublicSections();
     } else if (adminError) {
         adminError.style.display = "block";
     }
@@ -233,13 +249,14 @@ function loadProfile() {
                 <p><b>Education:</b> ${profile.education}</p>
                 <p><b>GitHub:</b> ${profile.github || "-"}</p>
                 <p><b>LinkedIn:</b> ${profile.linkedin || "-"}</p>
-                <p><small>Could not reach server. Showing default profile.</small></p>
+                <p><small>Server is waking up. Retrying...</small></p>
             `;
             pName.value = profile.name || "";
             pEmail.value = profile.email || "";
             pEdu.value = profile.education || "";
             pGithub.value = profile.github || "";
             pLinkedin.value = profile.linkedin || "";
+            scheduleAutoRetry("profile", loadProfile);
         });
 }
 
@@ -327,10 +344,11 @@ function loadSkills() {
         .catch(() => {
             skills.innerHTML = `
                 <li>
-                    Failed to load skills. 
+                    Server is waking up. Retrying...
                     <button onclick="loadSkills()">Retry</button>
                 </li>
             `;
+            scheduleAutoRetry("skills", loadSkills);
         });
 }
 
@@ -451,10 +469,11 @@ function loadProjects() {
         .catch(() => {
             projects.innerHTML = `
                 <p>
-                    Failed to load projects.
+                    Server is waking up. Retrying...
                     <button onclick="loadProjects()">Retry</button>
                 </p>
             `;
+            scheduleAutoRetry("projects", loadProjects);
         });
 }
 
@@ -581,10 +600,11 @@ function loadWork() {
         .catch(() => {
             workList.innerHTML = `
                 <li>
-                    Failed to load work.
+                    Server is waking up. Retrying...
                     <button onclick="loadWork()">Retry</button>
                 </li>
             `;
+            scheduleAutoRetry("work", loadWork);
         });
 }
 
