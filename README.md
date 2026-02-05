@@ -1,6 +1,6 @@
-ï»¿# Me-API Playground
+# Me-API Playground
 
-This is my full-stack portfolio API + dashboard built with FastAPI, SQLAlchemy, and a static frontend. It covers profile, skills, projects, work history, search, and admin-only edits.
+I built this as a simple, full-stack portfolio API + dashboard using FastAPI, SQLAlchemy, and a static frontend. It covers profile, skills, projects, work history, search, and admin-only edits.
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Dracula-5/Me-API-PlayGround)
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Dracula-5/Me-API-PlayGround)
@@ -101,7 +101,7 @@ Set env vars to control simple in-memory rate limit:
 
 ## Notes
 - Limits: single-profile by design for the demo, and the admin key lives in the client (demo-only).
-- Trade-offs: simple admin auth keeps things easy to review, but isnï¿½t production-grade.
+- Trade-offs: simple admin auth keeps things easy to review, but isn’t production-grade.
 - Hosting reality: Render free tiers can cold start; the UI retries and caches to feel consistent.
 - Next steps: move auth to server-side sessions or OAuth, add a real user model, and add tests + CI.
 
