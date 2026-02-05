@@ -209,9 +209,23 @@ function searchBySkill() {
     const skill = searchSkill.value.trim();
     if (!skill) return;
     fetch(`${API}/projects?skill=${encodeURIComponent(skill)}`)
-        .then(r => r.json())
+        .then(async (r) => {
+            if (!r.ok) {
+                const msg = await r.text();
+                throw new Error(`${r.status} ${msg}`);
+            }
+            return r.json();
+        })
         .then(data => {
+            const projectsEl = document.getElementById("projects");
+            if (projectsEl) {
+                projectsEl.style.display = "block";
+            }
             projects.innerHTML = "";
+            if (!data.length) {
+                projects.innerHTML = `<p>No projects found for "${skill}".</p>`;
+                return;
+            }
             data.forEach(p => {
                 projects.innerHTML += `
                     <div class="project">
@@ -221,6 +235,9 @@ function searchBySkill() {
                     </div>
                 `;
             });
+        })
+        .catch((err) => {
+            alert(`Search by skill failed: ${err.message}`);
         });
 }
 
