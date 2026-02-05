@@ -52,7 +52,6 @@ const workStart = document.getElementById("workStart");
 const workEnd = document.getElementById("workEnd");
 const workDesc = document.getElementById("workDesc");
 
-const searchSkill = document.getElementById("searchSkill");
 const searchQuery = document.getElementById("searchQuery");
 const searchResults = document.getElementById("searchResults");
 
@@ -205,42 +204,6 @@ function saveProfile() {
 }
 
 /* ---------- SEARCH ---------- */
-function searchBySkill() {
-    const skill = searchSkill.value.trim();
-    if (!skill) return;
-    fetch(`${API}/projects?skill=${encodeURIComponent(skill)}`)
-        .then(async (r) => {
-            if (!r.ok) {
-                const msg = await r.text();
-                throw new Error(`${r.status} ${msg}`);
-            }
-            return r.json();
-        })
-        .then(data => {
-            const projectsEl = document.getElementById("projects");
-            if (projectsEl) {
-                projectsEl.style.display = "block";
-            }
-            projects.innerHTML = "";
-            if (!data.length) {
-                projects.innerHTML = `<p>No projects found for "${skill}".</p>`;
-                return;
-            }
-            data.forEach(p => {
-                projects.innerHTML += `
-                    <div class="project">
-                        <h3>${p.title}</h3>
-                        <p>${p.description}</p>
-                        <a href="${p.links?.link || "#"}" target="_blank" rel="noopener noreferrer">Open</a><br>
-                    </div>
-                `;
-            });
-        })
-        .catch((err) => {
-            alert(`Search by skill failed: ${err.message}`);
-        });
-}
-
 function searchAll() {
     const q = searchQuery.value.trim();
     if (!q) return;
