@@ -370,6 +370,10 @@ function loadProjects() {
 
 function addProject() {
     if (!requireAdmin()) return;
+    if (!projTitle.value || !projDesc.value) {
+        alert("Please enter project title and description");
+        return;
+    }
     fetch(`${API}/projects`, {
         method: "POST",
         headers: {"Content-Type":"application/json", ...getAuthHeaders()},
@@ -378,7 +382,19 @@ function addProject() {
             description: projDesc.value,
             links: { link: projLink.value }
         })
-    }).then(() => loadProjects());
+    }).then(async (r) => {
+        if (!r.ok) {
+            const msg = await r.text();
+            alert(`Add project failed: ${r.status} ${msg}`);
+            return;
+        }
+        projTitle.value = "";
+        projDesc.value = "";
+        projLink.value = "";
+        loadProjects();
+    }).catch(() => {
+        alert("Add project failed: network error");
+    });
 }
 
 function deleteProject(id) {

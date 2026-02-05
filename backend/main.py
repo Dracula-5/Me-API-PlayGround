@@ -252,16 +252,13 @@ def get_projects(skill: str | None = None, limit: int = 50, offset: int = 0, db:
     limit = max(1, min(limit, 100))
     offset = max(0, offset)
     if skill:
-        profile = db.query(Profile).first()
-        if not profile:
-            return []
-        has_skill = db.query(Skill).filter(
-            Skill.profile_id == profile.id,
-            Skill.name.ilike(f"%{skill}%")
-        ).first()
-        if not has_skill:
-            return []
-        return query.filter(Project.profile_id == profile.id).offset(offset).limit(limit).all()
+        query = (
+            db.query(Project)
+            .join(Profile, Project.profile_id == Profile.id)
+            .join(Skill, Skill.profile_id == Profile.id)
+            .filter(Skill.name.ilike(f"%{skill}%"))
+            .distinct()
+        )
     return query.offset(offset).limit(limit).all()
 
 
