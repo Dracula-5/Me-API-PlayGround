@@ -15,6 +15,13 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "admin 123")   # simple on purpose (demo)
+DEFAULT_PROFILE = {
+    "name": "K V Dheeraj Reddy",
+    "email": "dheerajsmile236@gmail.com",
+    "education": "B.Tech in Engineering Physics at IIT Mandi",
+    "github": "https://github.com/Dracula-5",
+    "linkedin": "https://www.linkedin.com/in/k-v-dheeraj-reddy-727075303/"
+}
 def verify_admin(x_api_key: str = Header(None)):
     if x_api_key != ADMIN_API_KEY:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -88,7 +95,10 @@ def create_profile(profile: ProfileCreate, db: Session = Depends(get_db)):
 def get_profile(db: Session = Depends(get_db)):
     profile = db.query(Profile).first()
     if not profile:
-        raise HTTPException(404, "Create profile first")
+        profile = Profile(**DEFAULT_PROFILE)
+        db.add(profile)
+        db.commit()
+        db.refresh(profile)
     return profile
 
 
