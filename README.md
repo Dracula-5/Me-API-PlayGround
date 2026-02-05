@@ -1,4 +1,4 @@
-# Me-API Playground
+ï»¿# Me-API Playground
 
 This is my full-stack portfolio API + dashboard built with FastAPI, SQLAlchemy, and a static frontend. It covers profile, skills, projects, work history, search, and admin-only edits.
 
@@ -101,7 +101,7 @@ Set env vars to control simple in-memory rate limit:
 
 ## Notes
 - Limits: single-profile by design for the demo, and the admin key lives in the client (demo-only).
-- Trade-offs: simple admin auth keeps things easy to review, but isn’t production-grade.
+- Trade-offs: simple admin auth keeps things easy to review, but isnï¿½t production-grade.
 - Hosting reality: Render free tiers can cold start; the UI retries and caches to feel consistent.
 - Next steps: move auth to server-side sessions or OAuth, add a real user model, and add tests + CI.
 
