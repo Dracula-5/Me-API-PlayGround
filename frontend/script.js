@@ -10,6 +10,50 @@ const DEFAULT_PROFILE = {
     linkedin: "https://www.linkedin.com/in/k-v-dheeraj-reddy-727075303/"
 };
 
+const CACHE_KEYS = {
+    profile: "meapi_profile",
+    skills: "meapi_skills",
+    projects: "meapi_projects",
+    work: "meapi_work"
+};
+
+function readCache(key) {
+    try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function writeCache(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+        // Ignore storage errors (private mode, quota, etc.)
+    }
+}
+
+async function fetchJsonWithRetry(url, options = {}, retries = 3, delayMs = 800) {
+    let lastError;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            const res = await fetch(url, options);
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(`HTTP ${res.status} ${msg}`);
+            }
+            return await res.json();
+        } catch (err) {
+            lastError = err;
+            if (attempt === retries) break;
+            const backoff = delayMs * Math.pow(2, attempt);
+            await new Promise(r => setTimeout(r, backoff));
+        }
+    }
+    throw lastError;
+}
+
 function getAuthHeaders() {
     const key = sessionStorage.getItem("auth");
     if (!key) return {};
@@ -124,15 +168,11 @@ function updateUI() {
 
 
 /* ---------- TOGGLE SECTION ---------- */
-function toggleSection(id) {
+function showSection(id) {
     const el = document.getElementById(id);
-    if (el.style.display === "none" || el.style.display === "") {
-        el.style.display = "block";
-        return true;
-    } else {
-        el.style.display = "none";
-        return false;
-    }
+    if (!el) return false;
+    el.style.display = "block";
+    return true;
 }
 
 /* ---------- PROFILE ---------- */
@@ -149,15 +189,29 @@ function startProfileEdit() {
 }
 
 function loadProfile() {
-    if (!toggleSection("profileView")) return;
+    if (!showSection("profileView")) return;
 
-    fetch(`${API}/profile`)
-        .then(r => r.ok ? r.json() : DEFAULT_PROFILE)
+    const cachedProfile = readCache(CACHE_KEYS.profile);
+    if (cachedProfile) {
+        const profile = { ...DEFAULT_PROFILE, ...cachedProfile };
+        profileView.innerHTML = `
+            <p><b>Name:</b> ${profile.name}</p>
+            <p><b>Email:</b> ${profile.email}</p>
+            <p><b>Education:</b> ${profile.education}</p>
+            <p><b>GitHub:</b> ${profile.github || "-"}</p>
+            <p><b>LinkedIn:</b> ${profile.linkedin || "-"}</p>
+        `;
+    } else {
+        profileView.innerHTML = "<p>Loading profile...</p>";
+    }
+
+    fetchJsonWithRetry(`${API}/profile`)
         .then(p => {
             const profile = {
                 ...DEFAULT_PROFILE,
                 ...p
             };
+            writeCache(CACHE_KEYS.profile, profile);
             profileView.innerHTML = `
                 <p><b>Name:</b> ${profile.name}</p>
                 <p><b>Email:</b> ${profile.email}</p>
@@ -179,6 +233,7 @@ function loadProfile() {
                 <p><b>Education:</b> ${profile.education}</p>
                 <p><b>GitHub:</b> ${profile.github || "-"}</p>
                 <p><b>LinkedIn:</b> ${profile.linkedin || "-"}</p>
+                <p><small>Could not reach server. Showing default profile.</small></p>
             `;
             pName.value = profile.name || "";
             pEmail.value = profile.email || "";
@@ -229,10 +284,26 @@ function toggleloadSkills() {
 }
 
 function loadSkills() {
-    if (!toggleSection("skills")) return;
+    if (!showSection("skills")) return;
 
-    fetch(`${API}/skills`)
-        .then(r => r.json())
+    const cachedSkills = readCache(CACHE_KEYS.skills);
+    if (Array.isArray(cachedSkills) && cachedSkills.length) {
+        skills.innerHTML = "";
+        cachedSkills.forEach(s => {
+            skills.innerHTML += `
+                <li>
+                    <strong>${s.name}</strong>
+                    <span class="badge ${s.proficiency.toLowerCase()}">
+                        ${s.proficiency}
+                    </span>
+                </li>
+            `;
+        });
+    } else {
+        skills.innerHTML = "<li>Loading skills...</li>";
+    }
+
+    fetchJsonWithRetry(`${API}/skills`)
         .then(data => {
             const loggedIn = sessionStorage.getItem("auth");
             skills.innerHTML = "";
@@ -248,6 +319,18 @@ function loadSkills() {
                     </li>
                 `;
             });
+            writeCache(CACHE_KEYS.skills, data);
+            if (!data.length) {
+                skills.innerHTML = "<li>No skills yet.</li>";
+            }
+        })
+        .catch(() => {
+            skills.innerHTML = `
+                <li>
+                    Failed to load skills. 
+                    <button onclick="loadSkills()">Retry</button>
+                </li>
+            `;
         });
 }
 
@@ -327,10 +410,25 @@ function toggleloadProjects() {
 }
 
 function loadProjects() {
-    if (!toggleSection("projects")) return;
+    if (!showSection("projects")) return;
 
-    fetch(`${API}/projects`)
-        .then(r => r.json())
+    const cachedProjects = readCache(CACHE_KEYS.projects);
+    if (Array.isArray(cachedProjects) && cachedProjects.length) {
+        projects.innerHTML = "";
+        cachedProjects.forEach(p => {
+            projects.innerHTML += `
+                <div class="project">
+                    <h3>${p.title}</h3>
+                    <p>${p.description}</p>
+                    <a href="${p.links?.link || "#"}" target="_blank" rel="noopener noreferrer">Open</a><br>
+                </div>
+            `;
+        });
+    } else {
+        projects.innerHTML = "<p>Loading projects...</p>";
+    }
+
+    fetchJsonWithRetry(`${API}/projects`)
         .then(data => {
             const loggedIn = sessionStorage.getItem("auth");
             projects.innerHTML = "";
@@ -345,6 +443,18 @@ function loadProjects() {
                     </div>
                 `;
             });
+            writeCache(CACHE_KEYS.projects, data);
+            if (!data.length) {
+                projects.innerHTML = "<p>No projects yet.</p>";
+            }
+        })
+        .catch(() => {
+            projects.innerHTML = `
+                <p>
+                    Failed to load projects.
+                    <button onclick="loadProjects()">Retry</button>
+                </p>
+            `;
         });
 }
 
@@ -426,10 +536,27 @@ function toggleloadWork() {
 }
 
 function loadWork() {
-    if (!toggleSection("workList")) return;
+    if (!showSection("workList")) return;
 
-    fetch(`${API}/work`)
-        .then(r => r.json())
+    const cachedWork = readCache(CACHE_KEYS.work);
+    if (Array.isArray(cachedWork) && cachedWork.length) {
+        workList.innerHTML = "";
+        cachedWork.forEach(w => {
+            workList.innerHTML += `
+                <li>
+                    <div>
+                        <strong>${w.role}</strong> at ${w.company}<br>
+                        <small>${w.start_date} - ${w.end_date || "Present"}</small><br>
+                        <span>${w.description || ""}</span>
+                    </div>
+                </li>
+            `;
+        });
+    } else {
+        workList.innerHTML = "<li>Loading work...</li>";
+    }
+
+    fetchJsonWithRetry(`${API}/work`)
         .then(data => {
             const loggedIn = sessionStorage.getItem("auth");
             workList.innerHTML = "";
@@ -446,6 +573,18 @@ function loadWork() {
                     </li>
                 `;
             });
+            writeCache(CACHE_KEYS.work, data);
+            if (!data.length) {
+                workList.innerHTML = "<li>No work entries yet.</li>";
+            }
+        })
+        .catch(() => {
+            workList.innerHTML = `
+                <li>
+                    Failed to load work.
+                    <button onclick="loadWork()">Retry</button>
+                </li>
+            `;
         });
 }
 
@@ -526,6 +665,19 @@ function cancelWorkEdit() {
 }
 
 updateUI();
+
+function loadAllPublicSections() {
+    loadProfile();
+    loadSkills();
+    loadProjects();
+    loadWork();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadAllPublicSections);
+} else {
+    loadAllPublicSections();
+}
 
 if (loginBtn) {
     loginBtn.addEventListener("click", openAdminModal);

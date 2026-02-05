@@ -2,16 +2,14 @@
 
 Full-stack portfolio API and dashboard built with FastAPI, SQLAlchemy, and a static frontend. Supports profile, skills, projects, work history, search, and admin-only edits.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=YOUR_REPO_URL)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=YOUR_REPO_URL)
-
-Replace `YOUR_REPO_URL` with your GitHub repo URL after pushing.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Dracula-5/Me-API-PlayGround)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Dracula-5/Me-API-PlayGround)
 
 ## Working URLs
-- Frontend: YOUR_NETLIFY_URL
-- Backend: YOUR_RENDER_URL
-- Repo: YOUR_REPO_URL
-- Resume: YOUR_RESUME_URL
+- Frontend: https://dapper-douhua-9deab0.netlify.app/
+- Backend: https://me-api-playground-aw2m.onrender.com
+- Repo: https://github.com/Dracula-5/Me-API-PlayGround
+- Resume: https://drive.google.com/file/d/1AmJA3RaZsyTF0EVXF7z9mj1n_hOcMF-K/view?usp=sharing
 
 ## Architecture
 - FastAPI + SQLAlchemy API in `backend/`
@@ -38,6 +36,26 @@ Replace `YOUR_REPO_URL` with your GitHub repo URL after pushing.
    - `CORS_ORIGINS` (set to your Netlify site URL)
 5. In `frontend/index.html`, update the `api-base` meta tag to your Render URL.
 6. Create a Netlify site from this repo and set publish directory to `frontend`.
+
+## Build-Time Metadata (Netlify)
+Netlify runs a build step that injects live profile/skills/projects into HTML metadata.
+If you ever need to run it locally:
+```
+python frontend/generate_meta.py
+```
+
+## Data Persistence (Render Postgres)
+To make data permanent (no resets), use Render Postgres and set:
+```
+DATABASE_URL=<your_render_postgres_internal_url>
+```
+
+## One-time Migration (SQLite -> Postgres)
+If you already added data locally in `backend/meapi.db` and want it in Postgres:
+```
+set TARGET_DATABASE_URL=<your_render_postgres_internal_url>
+python backend/migrate_sqlite_to_postgres.py --reset
+```
 
 ## Schema
 See `backend/schema.md`.

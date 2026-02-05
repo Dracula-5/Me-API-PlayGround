@@ -1,2 +1,3 @@
 [build]
+  command = "python frontend/generate_meta.py"
   publish = "frontend"
